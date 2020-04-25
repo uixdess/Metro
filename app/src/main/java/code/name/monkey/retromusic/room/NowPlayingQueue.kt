@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class NowPlayingQueue(context: Context) {
 
-    private val queueDao = MusicPlaybackQueueStoreDatabase.getMusicDatabase(context).queueDao()
+    private val queueDao = QueueStoreDatabase.getMusicDatabase(context).queueDao()
 
     private val musicQueueRepository: MusicQueueRepository = MusicQueueRepository(queueDao)
 
