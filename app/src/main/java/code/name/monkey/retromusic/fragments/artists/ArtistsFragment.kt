@@ -10,12 +10,13 @@ import code.name.monkey.retromusic.adapter.artist.ArtistAdapter
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewCustomGridSizeFragment
 import code.name.monkey.retromusic.interfaces.MainActivityFragmentCallbacks
 import code.name.monkey.retromusic.util.PreferenceUtil
+import dev.olog.scrollhelper.layoutmanagers.OverScrollGridLayoutManager
 
 class ArtistsFragment :
     AbsLibraryPagerRecyclerViewCustomGridSizeFragment<ArtistAdapter, GridLayoutManager>(),
     MainActivityFragmentCallbacks {
 
-    lateinit var artistViewModel: ArtistViewModel
+    private lateinit var artistViewModel: ArtistViewModel
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +47,7 @@ class ArtistsFragment :
     }
 
     override fun createLayoutManager(): GridLayoutManager {
-        return GridLayoutManager(requireActivity(), getGridSize())
+        return OverScrollGridLayoutManager(requireActivity(), getGridSize())
     }
 
     override fun createAdapter(): ArtistAdapter {

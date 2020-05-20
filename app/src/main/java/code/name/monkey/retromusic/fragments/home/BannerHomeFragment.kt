@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.Constants
@@ -39,6 +38,7 @@ import code.name.monkey.retromusic.util.NavigationUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import dev.olog.scrollhelper.layoutmanagers.OverScrollLinearLayoutManager
 import kotlinx.android.synthetic.main.abs_playlists.*
 import kotlinx.android.synthetic.main.fragment_banner_home.*
 import kotlinx.android.synthetic.main.home_content.*
@@ -63,6 +63,7 @@ class BannerHomeFragment : AbsMainActivityFragment(), MainActivityFragmentCallba
     }
 
     private fun loadImageFromStorage() {
+
         Glide.with(requireContext())
             .load(
                 File(
@@ -144,7 +145,7 @@ class BannerHomeFragment : AbsMainActivityFragment(), MainActivityFragmentCallba
 
         homeAdapter = HomeAdapter(mainActivity, displayMetrics)
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(mainActivity)
+            layoutManager = OverScrollLinearLayoutManager(mainActivity)
             adapter = homeAdapter
         }
         homeModel = ViewModelProvider(this).get(HomeViewModel::class.java)

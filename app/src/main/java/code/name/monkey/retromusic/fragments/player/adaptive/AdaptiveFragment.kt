@@ -159,8 +159,8 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
             inflateMenu(R.menu.menu_player)
             setNavigationOnClickListener { requireActivity().onBackPressed() }
             ToolbarContentTintHelper.colorizeToolbar(this, primaryColor, requireActivity())
-            setTitleTextColor(textColorPrimary(requireContext()))
-            setSubtitleTextColor(textColorSecondary(requireContext()))
+            setTitleTextColor(textColorPrimary())
+            setSubtitleTextColor(textColorSecondary())
             setOnMenuItemClickListener(this@AdaptiveFragment)
         }
     }

@@ -127,10 +127,14 @@ abstract class AbsSlidingMusicPanelActivity : AbsMusicServiceActivity(),
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        behavior.removeBottomSheetCallback(bottomSheetCallbackList)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        behavior.removeBottomSheetCallback(bottomSheetCallbackList)
-        if (navigationBarColorAnimator != null) navigationBarColorAnimator?.cancel() // just in case
+        navigationBarColorAnimator?.cancel()
     }
 
     protected fun wrapSlidingMusicPanel(@LayoutRes resId: Int): View {
@@ -158,7 +162,7 @@ abstract class AbsSlidingMusicPanelActivity : AbsMusicServiceActivity(),
         // necessary to make the views below clickable
         miniPlayerFragment?.view?.visibility = if (alpha == 0f) View.GONE else View.VISIBLE
 
-        bottomNavigationView.translationY = progress * 500
+        //bottomNavigationView.translationY = progress * 500
         //bottomNavigationView.alpha = alpha
     }
 
@@ -387,4 +391,5 @@ abstract class AbsSlidingMusicPanelActivity : AbsMusicServiceActivity(),
             bottomNavigationView.hide()
         }
     }
+
 }

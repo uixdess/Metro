@@ -10,6 +10,7 @@ import code.name.monkey.retromusic.adapter.album.AlbumAdapter
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewCustomGridSizeFragment
 import code.name.monkey.retromusic.interfaces.MainActivityFragmentCallbacks
 import code.name.monkey.retromusic.util.PreferenceUtil
+import dev.olog.scrollhelper.layoutmanagers.OverScrollGridLayoutManager
 
 class AlbumsFragment :
     AbsLibraryPagerRecyclerViewCustomGridSizeFragment<AlbumAdapter, GridLayoutManager>(),
@@ -32,7 +33,7 @@ class AlbumsFragment :
         get() = R.string.no_albums
 
     override fun createLayoutManager(): GridLayoutManager {
-        return GridLayoutManager(requireActivity(), getGridSize())
+        return OverScrollGridLayoutManager(requireActivity(), getGridSize())
     }
 
     override fun createAdapter(): AlbumAdapter {

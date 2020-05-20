@@ -11,6 +11,7 @@ import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.playlist.PlaylistAdapter
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewFragment
 import code.name.monkey.retromusic.interfaces.MainActivityFragmentCallbacks
+import dev.olog.scrollhelper.layoutmanagers.OverScrollGridLayoutManager
 
 class PlaylistsFragment :
     AbsLibraryPagerRecyclerViewFragment<PlaylistAdapter, GridLayoutManager>(),
@@ -38,7 +39,7 @@ class PlaylistsFragment :
         get() = R.string.no_playlists
 
     override fun createLayoutManager(): GridLayoutManager {
-        return GridLayoutManager(requireContext(), 1)
+        return OverScrollGridLayoutManager(requireContext(), 1)
     }
 
     override fun createAdapter(): PlaylistAdapter {

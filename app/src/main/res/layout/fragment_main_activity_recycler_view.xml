@@ -5,11 +5,12 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <!--    TODO note that recycler view has to cover the entire screen -->
+    <!--    TODO so has to be drawn under bottom navigation, toolbar, ecc, but has to be below statusbar-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:overScrollMode="never"

@@ -24,11 +24,12 @@ import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.GenreAdapter
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewFragment
 import code.name.monkey.retromusic.interfaces.MainActivityFragmentCallbacks
+import dev.olog.scrollhelper.layoutmanagers.OverScrollLinearLayoutManager
 
 class GenresFragment : AbsLibraryPagerRecyclerViewFragment<GenreAdapter, LinearLayoutManager>(),
     MainActivityFragmentCallbacks {
 
-    lateinit var genreViewModel: GenreViewModel
+    private lateinit var genreViewModel: GenreViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class GenresFragment : AbsLibraryPagerRecyclerViewFragment<GenreAdapter, LinearL
     }
 
     override fun createLayoutManager(): LinearLayoutManager {
-        return LinearLayoutManager(activity)
+        return OverScrollLinearLayoutManager(activity)
     }
 
     override fun createAdapter(): GenreAdapter {

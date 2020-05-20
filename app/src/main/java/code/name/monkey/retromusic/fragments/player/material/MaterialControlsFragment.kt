@@ -104,7 +104,7 @@ class MaterialControlsFragment : AbsPlayerControlsFragment() {
                 MaterialValueHelper.getPrimaryTextColor(requireContext(), false)
             lastDisabledPlaybackControlsColor =
                 MaterialValueHelper.getPrimaryDisabledTextColor(requireContext(), false)
-        }else{
+        } else {
             lastPlaybackControlsColor =
                 MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
             lastDisabledPlaybackControlsColor =
@@ -116,7 +116,7 @@ class MaterialControlsFragment : AbsPlayerControlsFragment() {
         val colorFinal = if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
             lastPlaybackControlsColor
         } else {
-            textColorSecondary(requireContext())
+            textColorSecondary()
         }.ripAlpha()
 
         text.setTextColor(colorFinal)

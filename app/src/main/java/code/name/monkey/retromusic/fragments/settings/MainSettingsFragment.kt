@@ -68,7 +68,9 @@ class MainSettingsFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        scrollView.setOnScrollChangeListener(View.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
 
+        })
         generalSettings.setOnClickListener(this)
         audioSettings.setOnClickListener(this)
         nowPlayingSettings.setOnClickListener(this)

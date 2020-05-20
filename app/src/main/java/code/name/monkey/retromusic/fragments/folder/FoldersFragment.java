@@ -12,7 +12,7 @@
  * See the GNU General Public License for more details.
  */
 
-package code.name.monkey.retromusic.fragments.mainactivity;
+package code.name.monkey.retromusic.fragments.folder;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -73,6 +73,7 @@ import code.name.monkey.retromusic.util.RetroColorUtil;
 import code.name.monkey.retromusic.util.ThemedFastScroller;
 import code.name.monkey.retromusic.views.BreadCrumbLayout;
 import code.name.monkey.retromusic.views.ScrollingViewOnApplyWindowInsetsListener;
+import dev.olog.scrollhelper.layoutmanagers.OverScrollLinearLayoutManager;
 import me.zhanghai.android.fastscroll.FastScroller;
 
 public class FoldersFragment extends AbsMainActivityFragment implements
@@ -478,7 +479,7 @@ public class FoldersFragment extends AbsMainActivityFragment implements
     }
 
     private void setUpRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new OverScrollLinearLayoutManager(getActivity()));
         FastScroller fastScroller = ThemedFastScroller.INSTANCE.create(recyclerView);
         recyclerView.setOnApplyWindowInsetsListener(
                 new ScrollingViewOnApplyWindowInsetsListener(recyclerView, fastScroller));

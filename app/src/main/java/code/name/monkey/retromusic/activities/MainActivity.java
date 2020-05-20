@@ -39,7 +39,6 @@ import androidx.fragment.app.Fragment;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.afollestad.materialcab.MaterialCab.Callback;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -61,14 +60,15 @@ import code.name.monkey.appthemehelper.ThemeStore;
 import code.name.monkey.appthemehelper.util.ATHUtil;
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper;
 import code.name.monkey.retromusic.R;
+import code.name.monkey.retromusic.RetroScrollHelper;
 import code.name.monkey.retromusic.activities.base.AbsSlidingMusicPanelActivity;
 import code.name.monkey.retromusic.dialogs.CreatePlaylistDialog;
 import code.name.monkey.retromusic.fragments.albums.AlbumsFragment;
 import code.name.monkey.retromusic.fragments.artists.ArtistsFragment;
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewCustomGridSizeFragment;
+import code.name.monkey.retromusic.fragments.folder.FoldersFragment;
 import code.name.monkey.retromusic.fragments.genres.GenresFragment;
 import code.name.monkey.retromusic.fragments.home.BannerHomeFragment;
-import code.name.monkey.retromusic.fragments.mainactivity.FoldersFragment;
 import code.name.monkey.retromusic.fragments.playlists.PlaylistsFragment;
 import code.name.monkey.retromusic.fragments.queue.PlayingQueueFragment;
 import code.name.monkey.retromusic.fragments.songs.SongsFragment;
@@ -89,13 +89,13 @@ import code.name.monkey.retromusic.util.NavigationUtil;
 import code.name.monkey.retromusic.util.PreferenceUtil;
 import code.name.monkey.retromusic.util.RetroColorUtil;
 import code.name.monkey.retromusic.util.RetroUtil;
+import dev.olog.scrollhelper.ScrollHelper;
 
 /**
  * Created by hemanths on 2020-02-19.
  */
 public class MainActivity extends AbsSlidingMusicPanelActivity
         implements CabHolder, SharedPreferences.OnSharedPreferenceChangeListener {
-
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final int APP_INTRO_REQUEST = 100;
     public static final String EXPAND_PANEL = "expand_panel";
@@ -115,10 +115,11 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
             }
         }
     };
+    @SuppressWarnings("FieldCanBeLocal")
+    private ScrollHelper scrollHelper;
     private MainActivityFragmentCallbacks currentFragment;
     private boolean blockRequestPermissions = false;
     private MaterialCab cab;
-    private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
     private AppUpdateManager appUpdateManager;
     InstallStateUpdatedListener listener = new InstallStateUpdatedListener() {
@@ -163,7 +164,6 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
         }
 
         mToolbar = findViewById(R.id.toolbar);
-        mAppBarLayout = findViewById(R.id.appBarLayout);
 
         //checkShowChangelog();
         AppRater.appLaunched(this);
@@ -177,7 +177,7 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
             selectedFragment(item.getItemId());
             return true;
         });
-        mIntentFilter.addAction(MusicService.MEDIA_STORE_CHANGED);
+        scrollHelper = new RetroScrollHelper(this);
     }
 
 
@@ -253,14 +253,6 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
         PreferenceUtil.getInstance(this).unregisterOnSharedPreferenceChangedListener(this);
     }
 
-    public void addOnAppBarOffsetChangedListener(
-            @NonNull AppBarLayout.OnOffsetChangedListener onOffsetChangedListener) {
-        mAppBarLayout.addOnOffsetChangedListener(onOffsetChangedListener);
-    }
-
-    public int getTotalAppBarScrollingRange() {
-        return mAppBarLayout.getTotalScrollRange();
-    }
 
     @Override
     public boolean handleBackPress() {
@@ -403,11 +395,6 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
                                 ATHUtil.INSTANCE.resolveColor(this, R.attr.colorSurface)))
                 .start(callback);
         return cab;
-    }
-
-    public void removeOnAppBarOffsetChangedListener(
-            @NonNull AppBarLayout.OnOffsetChangedListener onOffsetChangedListener) {
-        mAppBarLayout.removeOnOffsetChangedListener(onOffsetChangedListener);
     }
 
     public void setCurrentFragment(@NonNull Fragment fragment, @NonNull String tag) {
@@ -830,7 +817,6 @@ public class MainActivity extends AbsSlidingMusicPanelActivity
     private void setupToolbar() {
         setTitle(null);
         mToolbar.setBackgroundColor(ATHUtil.INSTANCE.resolveColor(this, R.attr.colorSurface));
-        mAppBarLayout.setBackgroundColor(ATHUtil.INSTANCE.resolveColor(this, R.attr.colorSurface));
         setSupportActionBar(mToolbar);
     }
 }

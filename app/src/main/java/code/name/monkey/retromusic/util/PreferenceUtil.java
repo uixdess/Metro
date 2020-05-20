@@ -44,7 +44,7 @@ import java.util.Objects;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.fragments.AlbumCoverStyle;
 import code.name.monkey.retromusic.fragments.NowPlayingScreen;
-import code.name.monkey.retromusic.fragments.mainactivity.FoldersFragment;
+import code.name.monkey.retromusic.fragments.folder.FoldersFragment;
 import code.name.monkey.retromusic.helper.SortOrder.AlbumSongSortOrder;
 import code.name.monkey.retromusic.model.CategoryInfo;
 import code.name.monkey.retromusic.model.CategoryInfo.Category;

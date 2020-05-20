@@ -17,7 +17,9 @@ package code.name.monkey.retromusic.extensions
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.ColorUtil
@@ -31,8 +33,24 @@ fun Context.accentColor(): Int {
     return ThemeStore.accentColor(this)
 }
 
+fun View.accentColor(): Int {
+    return ThemeStore.accentColor(context)
+}
+
+fun Fragment.accentColor(): Int {
+    return ThemeStore.accentColor(requireContext())
+}
+
 fun Context.surfaceColor(): Int {
     return ATHUtil.resolveColor(this, R.attr.colorSurface, Color.WHITE)
+}
+
+fun View.surfaceColor(): Int {
+    return ATHUtil.resolveColor(context, R.attr.colorSurface, Color.WHITE)
+}
+
+fun Fragment.surfaceColor(): Int {
+    return ATHUtil.resolveColor(requireContext(), R.attr.colorSurface, Color.WHITE)
 }
 
 fun Toolbar.backgroundTintList() {
@@ -45,10 +63,26 @@ fun Context.textColorSecondary(): Int {
     return ATHUtil.resolveColor(this, android.R.attr.textColorSecondary)
 }
 
+fun Fragment.textColorSecondary(): Int {
+    return ATHUtil.resolveColor(requireContext(), android.R.attr.textColorSecondary)
+}
+
 fun Context.colorControlNormal(): Int {
     return ATHUtil.resolveColor(this, android.R.attr.colorControlNormal)
 }
 
+fun View.colorControlNormal(): Int {
+    return ATHUtil.resolveColor(context, android.R.attr.colorControlNormal)
+}
+
 fun Context.textColorPrimary(): Int {
     return ATHUtil.resolveColor(this, android.R.attr.textColorPrimary)
+}
+
+fun View.textColorPrimary(): Int {
+    return ATHUtil.resolveColor(context, android.R.attr.textColorPrimary)
+}
+
+fun Fragment.textColorPrimary(): Int {
+    return ATHUtil.resolveColor(requireContext(), android.R.attr.textColorPrimary)
 }
