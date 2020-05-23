@@ -28,7 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class DeletePlaylistDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val playlists = extraNotNull<List<Playlist>>(EXTRA_PLAYLIST).value
+        val playlists = extraNotNull<ArrayList<Playlist>>(EXTRA_PLAYLIST).value
         val title: Int
         val message: CharSequence
         //noinspection ConstantConditions
