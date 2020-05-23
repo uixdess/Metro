@@ -133,9 +133,7 @@
         <item name="fontFamily">@font/google_san</item>
     </style>
 
-    <style name="TextViewNormal">
-        <item name="android:textSize">14sp</item>
-    </style>
+    <style name="TextViewNormal" parent="TextAppearance.AppCompat.Body2" />
 
     <style name="TextViewHeadline4" parent="TextAppearance.MaterialComponents.Headline4">
         <item name="android:fontFamily">@font/google_san</item>
