@@ -4,41 +4,36 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.GridLayoutManager
-import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.song.ShuffleButtonSongAdapter
 import code.name.monkey.retromusic.adapter.song.SongAdapter
+import code.name.monkey.retromusic.fragments.ReloadType
 import code.name.monkey.retromusic.fragments.base.AbsLibraryPagerRecyclerViewCustomGridSizeFragment
 import code.name.monkey.retromusic.interfaces.MainActivityFragmentCallbacks
 import code.name.monkey.retromusic.model.Song
-import code.name.monkey.retromusic.mvp.presenter.SongPresenter
 import code.name.monkey.retromusic.mvp.presenter.SongView
-import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.PreferenceUtilKT
 import java.util.*
-import javax.inject.Inject
 
 class SongsFragment :
     AbsLibraryPagerRecyclerViewCustomGridSizeFragment<SongAdapter, GridLayoutManager>(),
     SongView, MainActivityFragmentCallbacks {
-
-    @Inject
-    lateinit var songPresenter: SongPresenter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mainActivity.libraryViewModel.allSongs()
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                if (it.isNotEmpty()) {
+                    adapter?.swapDataSet(it)
+                } else {
+                    adapter?.swapDataSet(listOf())
+                }
+            })
+    }
 
     override val emptyMessage: Int
         get() = R.string.no_songs
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        App.musicComponent.inject(this)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        songPresenter.attachView(this)
-    }
-
     override fun createLayoutManager(): GridLayoutManager {
-        println("createLayoutManager: ${getGridSize()}")
         return GridLayoutManager(requireActivity(), getGridSize()).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
@@ -66,39 +61,24 @@ class SongsFragment :
         adapter?.swapDataSet(songs)
     }
 
-    override fun onMediaStoreChanged() {
-        songPresenter.loadSongs()
-    }
-
     override fun loadGridSize(): Int {
-        return PreferenceUtil.getInstance(requireContext()).getSongGridSize(requireContext())
+        return PreferenceUtilKT.songGridSize
     }
 
     override fun saveGridSize(gridColumns: Int) {
-        PreferenceUtil.getInstance(requireContext()).setSongGridSize(gridColumns)
+        PreferenceUtilKT.songGridSize = gridColumns
     }
 
     override fun loadGridSizeLand(): Int {
-        return PreferenceUtil.getInstance(requireContext()).getSongGridSizeLand(requireContext())
+        return PreferenceUtilKT.songGridSizeLand
     }
 
     override fun saveGridSizeLand(gridColumns: Int) {
-        PreferenceUtil.getInstance(requireContext()).setSongGridSizeLand(gridColumns)
+        PreferenceUtilKT.songGridSizeLand = gridColumns
     }
 
     override fun setGridSize(gridSize: Int) {
         adapter?.notifyDataSetChanged()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (adapter?.dataSet.isNullOrEmpty())
-            songPresenter.loadSongs()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        songPresenter.detachView()
     }
 
     override fun showEmptyView() {
@@ -106,39 +86,36 @@ class SongsFragment :
     }
 
     override fun loadSortOrder(): String {
-        return PreferenceUtil.getInstance(requireContext()).songSortOrder
+        return PreferenceUtilKT.songSortOrder
     }
 
     override fun saveSortOrder(sortOrder: String) {
-        PreferenceUtil.getInstance(requireContext()).songSortOrder = sortOrder
+        PreferenceUtilKT.songSortOrder = sortOrder
+    }
+
+    @LayoutRes
+    override fun loadLayoutRes(): Int {
+        return PreferenceUtilKT.songGridStyle
+    }
+
+    override fun saveLayoutRes(@LayoutRes layoutRes: Int) {
+        PreferenceUtilKT.songGridStyle = layoutRes
     }
 
     override fun setSortOrder(sortOrder: String) {
-        songPresenter.loadSongs()
+        mainActivity.libraryViewModel.forceReload(ReloadType.Songs)
     }
 
     companion object {
-
         @JvmField
         var TAG: String = SongsFragment::class.java.simpleName
 
         @JvmStatic
         fun newInstance(): SongsFragment {
-            val args = Bundle()
-            val fragment = SongsFragment()
-            fragment.arguments = args
-            return fragment
+            return SongsFragment()
         }
     }
 
-    @LayoutRes
-    override fun loadLayoutRes(): Int {
-        return PreferenceUtil.getInstance(requireContext()).songGridStyle
-    }
-
-    override fun saveLayoutRes(@LayoutRes layoutRes: Int) {
-        PreferenceUtil.getInstance(requireContext()).songGridStyle = layoutRes
-    }
 
     override fun handleBackPress(): Boolean {
         return false

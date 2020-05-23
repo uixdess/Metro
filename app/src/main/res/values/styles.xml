@@ -7,7 +7,7 @@
         <item name="android:scrollbars">none</item>
         <item name="fontFamily">@font/google_san</item>
         <item name="android:fontFamily">@font/google_san</item>
-        <item name="fontFamily">@font/google_san</item>
+        <item name="dialogCornerRadius">16dp</item>
     </style>
 
     <style name="Theme.RetroMusic.Black" parent="Theme.RetroMusic.Base.Black">
@@ -15,7 +15,7 @@
         <item name="android:scrollbars">none</item>
         <item name="fontFamily">@font/google_san</item>
         <item name="android:fontFamily">@font/google_san</item>
-        <item name="fontFamily">@font/google_san</item>
+        <item name="dialogCornerRadius">16dp</item>
     </style>
 
     <style name="Theme.RetroMusic.FollowSystem" parent="Theme.RetroMusic.Base.Adaptive">
@@ -23,7 +23,7 @@
         <item name="android:scrollbars">none</item>
         <item name="fontFamily">@font/google_san</item>
         <item name="android:fontFamily">@font/google_san</item>
-        <item name="fontFamily">@font/google_san</item>
+        <item name="dialogCornerRadius">16dp</item>
     </style>
 
     <style name="Theme.RetroMusic.Notification" parent="@android:style/TextAppearance.StatusBar.EventContent" />

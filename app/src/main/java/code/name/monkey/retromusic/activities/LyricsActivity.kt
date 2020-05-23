@@ -33,7 +33,7 @@ import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.model.lyrics.Lyrics
 import code.name.monkey.retromusic.util.LyricUtil
 import code.name.monkey.retromusic.util.MusicUtil
-import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.PreferenceUtilKT
 import code.name.monkey.retromusic.util.RetroUtil
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputLayout
@@ -61,7 +61,7 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener,
     }
 
     override fun onPageSelected(position: Int) {
-        PreferenceUtil.getInstance(this).lyricsOptions = position
+        PreferenceUtilKT.lyricsOption = position
         if (position == 0) fab.text = getString(R.string.synced_lyrics)
         else if (position == 1) fab.text = getString(R.string.lyrics)
     }
@@ -107,7 +107,7 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener,
 
         viewPager.apply {
             adapter = PagerAdapter(supportFragmentManager)
-            currentItem = PreferenceUtil.getInstance(this@LyricsActivity).lyricsOptions
+            currentItem = PreferenceUtilKT.lyricsOption
             addOnPageChangeListener(this@LyricsActivity)
         }
 
@@ -172,7 +172,6 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener,
 
         val materialDialog = MaterialDialog(this)
             .show {
-                cornerRadius(PreferenceUtil.getInstance(this@LyricsActivity).dialogCorner)
                 title(R.string.add_time_framed_lryics)
                 negativeButton(R.string.action_search) {
                     RetroUtil.openUrl(this@LyricsActivity, googleSearchLrcUrl)
@@ -210,7 +209,7 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener,
         val materialDialog = MaterialDialog(
             this
         ).show {
-            cornerRadius(PreferenceUtil.getInstance(this@LyricsActivity).dialogCorner)
+
             title(R.string.add_lyrics)
             negativeButton(R.string.action_search) {
                 RetroUtil.openUrl(this@LyricsActivity, getGoogleSearchUrl())

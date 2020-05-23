@@ -26,9 +26,7 @@ import android.widget.Toast
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil.getSongFileUri
-import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 
 class RingtoneManager(val context: Context) {
     fun setRingtone(song: Song) {
@@ -76,7 +74,6 @@ class RingtoneManager(val context: Context) {
 
         fun getDialog(context: Context): MaterialDialog {
             return MaterialDialog(context).show {
-                cornerRadius(PreferenceUtil.getInstance(context).dialogCorner)
                 title(R.string.dialog_title_set_ringtone)
                 message(R.string.dialog_message_set_ringtone)
                 positiveButton(android.R.string.ok) {

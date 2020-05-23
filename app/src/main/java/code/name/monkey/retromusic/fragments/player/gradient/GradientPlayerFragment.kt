@@ -38,7 +38,8 @@ import code.name.monkey.retromusic.misc.SimpleOnSeekbarChangeListener
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.service.MusicService
 import code.name.monkey.retromusic.util.MusicUtil
-import code.name.monkey.retromusic.util.PreferenceUtil
+
+import code.name.monkey.retromusic.util.PreferenceUtilKT
 import code.name.monkey.retromusic.util.ViewUtil
 import code.name.monkey.retromusic.util.color.MediaNotificationProcessor
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -207,7 +208,7 @@ class GradientPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelpe
         container.setBackgroundColor(ColorUtil.darkenColor(color.backgroundColor))
 
         lastPlaybackControlsColor = color.primaryTextColor
-        lastDisabledPlaybackControlsColor = color.secondaryTextColor
+        lastDisabledPlaybackControlsColor = ColorUtil.withAlpha(color.primaryTextColor, 0.3f)
 
         title.setTextColor(lastPlaybackControlsColor)
         text.setTextColor(lastDisabledPlaybackControlsColor)
@@ -243,7 +244,7 @@ class GradientPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelpe
     }
 
     private fun hideVolumeIfAvailable() {
-        if (PreferenceUtil.getInstance(requireContext()).volumeToggle) {
+        if (PreferenceUtilKT.isVolumeVisibilityMode) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.volumeFragmentContainer, VolumeFragment.newInstance())
                 .commit()
@@ -284,7 +285,7 @@ class GradientPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelpe
         title.text = song.title
         text.text = song.artistName
         updateLabel()
-        if (PreferenceUtil.getInstance(requireContext()).isSongInfo) {
+        if (PreferenceUtilKT.isSongInfo) {
             songInfo.text = getSongInfo(song)
             songInfo.show()
         } else {
@@ -304,9 +305,9 @@ class GradientPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelpe
 
     private fun updatePlayPauseDrawableState() {
         if (MusicPlayerRemote.isPlaying) {
-            playPauseButton.setImageResource(R.drawable.ic_pause_sharp_white_64dp)
+            playPauseButton.setImageResource(R.drawable.ic_pause_white_64dp)
         } else {
-            playPauseButton.setImageResource(R.drawable.ic_play_arrow_sharp_white_64dp)
+            playPauseButton.setImageResource(R.drawable.ic_play_arrow_white_64dp)
         }
     }
 
