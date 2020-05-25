@@ -1,4 +1,4 @@
-package code.name.monkey.retromusic.activities
+package code.name.monkey.retromusic.activities.albums
 
 import android.app.ActivityOptions
 import android.content.Intent
@@ -10,13 +10,13 @@ import android.view.SubMenu
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.MaterialUtil
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
-import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsSlidingMusicPanelActivity
 import code.name.monkey.retromusic.activities.tageditor.AbsTagEditorActivity
@@ -25,6 +25,7 @@ import code.name.monkey.retromusic.adapter.album.HorizontalAlbumAdapter
 import code.name.monkey.retromusic.adapter.song.SimpleSongAdapter
 import code.name.monkey.retromusic.dialogs.AddToPlaylistDialog
 import code.name.monkey.retromusic.dialogs.DeleteSongsDialog
+import code.name.monkey.retromusic.extensions.extraNotNull
 import code.name.monkey.retromusic.extensions.ripAlpha
 import code.name.monkey.retromusic.extensions.show
 import code.name.monkey.retromusic.extensions.surfaceColor
@@ -36,7 +37,6 @@ import code.name.monkey.retromusic.helper.SortOrder.AlbumSongSortOrder
 import code.name.monkey.retromusic.interfaces.CabHolder
 import code.name.monkey.retromusic.model.Album
 import code.name.monkey.retromusic.model.Artist
-import code.name.monkey.retromusic.mvp.presenter.AlbumDetailsPresenter
 import code.name.monkey.retromusic.mvp.presenter.AlbumDetailsView
 import code.name.monkey.retromusic.rest.model.LastFmAlbum
 import code.name.monkey.retromusic.util.*
@@ -46,7 +46,6 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_album.*
 import kotlinx.android.synthetic.main.activity_album_content.*
 import java.util.*
-import javax.inject.Inject
 import android.util.Pair as UtilPair
 
 class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, CabHolder {
@@ -69,6 +68,7 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
         return cab as MaterialCab
     }
 
+    private lateinit var viewModel: AlbumDetailsViewModel
     private lateinit var simpleSongAdapter: SimpleSongAdapter
     private lateinit var album: Album
     private lateinit var artistImage: ImageView
@@ -79,9 +79,6 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
     override fun createContentView(): View {
         return wrapSlidingMusicPanel(R.layout.activity_album)
     }
-
-    @Inject
-    lateinit var albumDetailsPresenter: AlbumDetailsPresenter
 
     private fun windowEnterTransition() {
         val slide = Slide()
@@ -101,34 +98,30 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
         setLightNavigationBar(true)
         setBottomBarVisibility(View.GONE)
         window.sharedElementsUseOverlay = true
-
-        App.musicComponent.inject(this)
-        albumDetailsPresenter.attachView(this)
-
-        if (intent.extras!!.containsKey(EXTRA_ALBUM_ID)) {
-            intent.extras?.getInt(EXTRA_ALBUM_ID)?.let {
-                albumDetailsPresenter.loadAlbum(it)
-                albumCoverContainer?.transitionName =
-                    "${getString(R.string.transition_album_art)}_$it"
-            }
-        } else {
-            finish()
-        }
-
         windowEnterTransition()
+
+        val albumId = extraNotNull<Int>(EXTRA_ALBUM_ID).value
         ActivityCompat.postponeEnterTransition(this)
-
-
-        artistImage = findViewById(R.id.artistImage)
-
+        val viewModelFactory = AlbumDetailsViewModelFactory(application, albumId)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AlbumDetailsViewModel::class.java)
+        viewModel.getAlbum().observe(this, androidx.lifecycle.Observer {
+            ActivityCompat.startPostponedEnterTransition(this@AlbumDetailsActivity)
+            album(it)
+        })
+        viewModel.getArtist().observe(this, androidx.lifecycle.Observer {
+            loadArtistImage(it)
+        })
+        viewModel.getAlbumInfo().observe(this, androidx.lifecycle.Observer {
+            aboutAlbum(it)
+        })
         setupRecyclerView()
-
+        artistImage = findViewById(R.id.artistImage)
         artistImage.setOnClickListener {
             val artistPairs = ActivityOptions.makeSceneTransitionAnimation(
                 this,
                 UtilPair.create(
                     artistImage,
-                    "${getString(R.string.transition_artist_image)}_${album.artistId}"
+                    getString(R.string.transition_artist_image)
                 )
             )
             NavigationUtil.goToArtistOptions(this, album.artistId, artistPairs)
@@ -157,11 +150,6 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
             isNestedScrollingEnabled = false
             adapter = simpleSongAdapter
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        albumDetailsPresenter.detachView()
     }
 
     override fun complete() {
@@ -201,8 +189,8 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
         }
         loadAlbumCover()
         simpleSongAdapter.swapDataSet(album.songs)
-        albumDetailsPresenter.loadMore(album.artistId)
-        albumDetailsPresenter.aboutAlbum(album.artistName ?: "-", album.title ?: "-")
+        viewModel.loadArtistAsync(album.artistId)
+        viewModel.loadAlbumInfoAsync(album)
     }
 
     override fun moreAlbums(albums: List<Album>) {
@@ -277,7 +265,6 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
         MaterialUtil.setTint(button = shuffleAction, color = buttonColor)
         MaterialUtil.setTint(button = playAction, color = buttonColor)
 
-
         toolbar.setBackgroundColor(surfaceColor())
         setSupportActionBar(toolbar)
         supportActionBar?.title = null
@@ -332,7 +319,10 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
                     albumCoverContainer,
                     "${getString(R.string.transition_album_art)}_${album.id}"
                 )
-                startActivityForResult(intent, TAG_EDITOR_REQUEST, options.toBundle())
+                startActivityForResult(
+                    intent,
+                    TAG_EDITOR_REQUEST, options.toBundle()
+                )
                 return true
             }
             /*Sort*/
@@ -389,18 +379,6 @@ class AlbumDetailsActivity : AbsSlidingMusicPanelActivity(), AlbumDetailsView, C
         album.songs?.let { simpleSongAdapter.swapDataSet(it) }
     }
 
-    override fun onMediaStoreChanged() {
-        super.onMediaStoreChanged()
-        reload()
-    }
-
-    private fun reload() {
-        if (intent.extras!!.containsKey(EXTRA_ALBUM_ID)) {
-            intent.extras?.getInt(EXTRA_ALBUM_ID)?.let { albumDetailsPresenter.loadAlbum(it) }
-        } else {
-            finish()
-        }
-    }
 
     override fun onBackPressed() {
         if (cab != null && cab!!.isActive) {
